@@ -38,6 +38,45 @@ print("Attention weights:\n", weights)
 print("Output:\n", output)
 
 
+class MultiHeadAttention(nn.Module):
+    def __init__(self, d_model, num_heads, dropout=None):
+        super().__init__()
+        assert d_model % num_heads == 0
 
+        self.d_model = d_model
+        self.num_heads = num_heads
+        self.d_k = d_model // num_heads
+
+        # Linear layers to project Q, K, V
+        self.W_q = nn.Linear(d_model, d_model)
+        self.W_k = nn.Linear(d_model, d_model)
+        self.W_v = nn.Linear(d_model, d_model)
+
+        # Final layer after concatenatino
+        self.W_o = nn.Linear(d_model, d_model)
+
+        self.attention = ScaledDotProductAttention(dropout)
+    
+    def forward(self, q, k, v, mask=None):
+        # Project
+        Q = self.W_q(q)
+        K = self.W_k(k)
+        V = self.W_v(v)
+
+        # Reshape for multi-head
+        Q = Q.view(batch_size, seq_len, self.num_heads, self.d_k).transpose(1,2)
+        K = K.view(batch_size, seq_len, self.num_heads, self.d_k).transpose(1,2)
+        V = V.view(batch_size, seq_len, self.num_heads, self.d_k).transpose(1,2)
+
+        # Apply scaled dot-product attention
+        attention_output, attention_weights = self.attention(Q, K, V, mask)
+
+        # Concatenate heads
+        attention_output = attention_output.transpose(1,2).contiguous().view(batch_size, seq_len, self.d_model)
+
+        # Final linear layer
+        attention_output = self.W_o(attention_output)
+
+        return attention_output, attention_weights
 
 
