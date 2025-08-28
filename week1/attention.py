@@ -4,7 +4,7 @@ import math
 class ScaledDotProductAttention(nn.Module):
     def __init__(self, dropout=None):
         super().__init__()
-        self.dropout = nn.droput(dropout) if dropout else None
+        self.dropout = nn.Droput(dropout) if dropout else None
         self.softmax = nn.Softmax(dim=-1)
     
     def forward(self, q, k, v, mask=None):
@@ -63,6 +63,7 @@ class MultiHeadAttention(nn.Module):
         K = self.W_k(k)
         V = self.W_v(v)
 
+        batch_size, seq_len, _ = Q.size()
         # Reshape for multi-head
         Q = Q.view(batch_size, seq_len, self.num_heads, self.d_k).transpose(1,2)
         K = K.view(batch_size, seq_len, self.num_heads, self.d_k).transpose(1,2)
@@ -80,3 +81,34 @@ class MultiHeadAttention(nn.Module):
         return attention_output, attention_weights
 
 
+class MLP(nn.Module):
+    def __init__(self, d_model, hidden_dim=None):
+        super().__init__()
+        if hidden_dim is None:
+            hidden_dim = 4 * d_model
+        self.fc1 = nn.Linear(d_model, hidden_dim)
+        self.fc2 = nn.Linear(hidden_dim, d_model)
+        self.act = nn.GELU()
+
+    def forward(self, x):
+        return self.fc2(self.act(self.fc1(x)))
+
+class TransformerBlock(nn.Module):
+    def __init__(self, d_model, num_heads):
+        super().__init__()
+        self.ln1 = nn.LayerNorm(d_model)
+        self.mha = MultiHeadAttention(d_model, num_heads)
+        self.ln2 = nn.LayerNorm(d_model)
+        self.mlp = MLP(d_model)
+    
+    def forward(self, x, mask=None):
+        x_norm = self.ln1(x)
+        # Attention block
+        attention_output, _ = self.mha(x_norm, x_norm, x_norm, mask)
+        x = x + attention_output
+
+        # Feedforward block
+        mlp_output = self.mlp(self.ln2(x))
+        x = x + mlp_output
+
+        return x
