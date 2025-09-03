@@ -1,0 +1,15 @@
+# accelerate_config.yaml
+compute_environment: LOCAL_MACHINE
+deepspeed_config: {}
+distributed_type: NO
+downcast_bf16: "no" # set "auto" or "yes" if using bf16-capable GPU (Ampere+ with correct drivers)
+fsdp_config: {}
+machine_rank: 0
+main_process_ip: null
+main_process_port: null
+main_training_function: main
+megatron_lm_config: {}
+mixed_precision: fp16 # use "fp16" if your GPU & PyTorch build support it, otherwise "no"
+num_machines: 1
+num_processes: 1 # number of processes per machine (1 for single-GPU)
+use_cpu: false # set true to force CPU-only
