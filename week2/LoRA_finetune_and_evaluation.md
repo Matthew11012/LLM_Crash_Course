@@ -6,17 +6,17 @@
 
 ## Summary
 
-**Hyperparameters used for fine-tune (command / CLI args):**
+### 1000 Examples of Alpaca dataset
+**Hyperparameters used for fine-tune:**
 
 ```
---hf_dataset_dir hf_dataset \
 --model_name_or_path gpt2 \
 --output_dir outputs/lora_adapter \
 --r 8 --alpha 16 --dropout 0.1 \
 --num_train_epochs 3 --per_device_train_batch_size 4 --fp16
 ```
 
-**Evaluation result (final):**
+**Evaluation result on:**
 
 ```json
 {  
@@ -30,10 +30,245 @@
 }
 ```
 
-Perplexity ≈ **8.65** — means model assigns on average probability mass equivalent to choosing among \~8 tokens per position. Reasonable result for an instruction-tuned tiny model on a small dataset.
+### 10000 Examples of Alpaca dataset
+**Hyperparameters used for fine-tune:**
+
+```
+--model_name_or_path gpt2 \
+--output_dir outputs/lora_adapter \
+--r 16 --alpha 32 --dropout 0.1 \
+--num_train_epochs 3 --per_device_train_batch_size 4 --fp16
+```
+
+**Evaluation result on:**
+
+```json
+{  
+    "eval_loss": 2.0961728372573853,
+   "perplexity": 8.1349763807645240169714,
+   "num_batches": 125,
+   "supervised_tokens": 143095,
+   "split": "validation",
+   "batch_size": 8,
+   "max_length": 512 
+}
+```
+
+Perplexity ≈ **8.13** — means model assigns on average probability mass equivalent to choosing among \~8 tokens per position. Reasonable result for an instruction-tuned tiny model on a small dataset.
 
 ---
 
+## Model Response Comparison
+### Base vs 1000 Example LoRA Finetuned
+```
+Prompt: Explain why the sky is blue
+
+KL divergence: nan
+L2 distance:   1825.000000
+
+=== Base model output ===
+Explain why the sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+=== LoRA model output ===
+
+Explain why the sky is blue and why it's blue.
+
+The sky is blue because it is blue. It is blue because it is blue because it is blue because it is blue because it is blue because it is blue because it is blue because it is blue because it
+
+
+Prompt: List the steps for making a peanut butter and jelly sandwich
+
+KL divergence: nan
+L2 distance:   3860.000000
+
+=== Base model output ===
+List the steps for making a peanut butter and jelly sandwich.
+
+Step 1:
+
+1. In a large bowl, combine the butter, sugar, and salt.
+
+2. Add the eggs, milk, and vanilla.
+
+3. Add the flour and mix well.
+
+=== LoRA model output ===
+List the steps for making a peanut butter and jelly sandwich.
+
+Step 1: Preheat oven to 350 degrees F.
+
+Step 2: In a large bowl, whisk together the butter, sugar, and vanilla.
+
+Step 3: Add the eggs, vanilla, and salt.
+
+
+
+Prompt: Write a short story about a robot who learns to paint.
+KL divergence: nan
+L2 distance:   5740.000000
+
+=== Base model output ===
+Write a short story about a robot who learns to paint.
+
+The story is about a robot who learns to paint.
+
+The story is about a robot who learns to paint.
+
+The story is about a robot who learns to paint.
+
+The story is about a robot who learns to
+
+=== LoRA model output ===
+Write a short story about a robot who learns to paint.
+
+"I'm a robot," says the robot, "and I'm learning to paint."
+
+"I'm learning to paint," says the robot, "and I'm learning to paint."
+
+"I'm learning to paint,"
+
+
+Prompt: Compare cats and dogs as pets in a few sentences.
+KL divergence: nan
+L2 distance:   487.500000
+
+=== Base model output ===
+Compare cats and dogs as pets in a few sentences.
+
+"I'm not going to say that I'm a cat lover, but I'm not going to say that I'm a dog lover either," he said. "I'm not going to say that I'm a dog lover either."
+
+=== LoRA model output ===
+Compare cats and dogs as pets in a few sentences.
+
+"I'm not sure if it's a good idea to have cats or dogs in your home, but I think it's a good idea to have them in your home," she said.
+
+"I think it's important to have
+```
+
+### Base vs 10000 examples LoRA Finetuned
+```
+Prompt: Explain why the sky is blue
+KL divergence: 0.228882
+L2 distance:   3722.000000
+
+=== Base model output ===
+Explain why the sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+The sky is blue.
+
+=== LoRA model output ===
+Explain why the sky is blue and why it's blue.
+
+The sky is blue because it is a complex system of colors, which means that it is composed of many different shades of blue, including red, green, and blue. The colors of the sky are also complex
+
+
+Prompt: List the steps for making a peanut butter and jelly sandwich
+KL divergence: 0.120178
+L2 distance:   5072.000000
+
+=== Base model output ===
+List the steps for making a peanut butter and jelly sandwich.
+
+Step 1:
+
+1. In a large bowl, combine the butter, sugar, and salt.
+
+2. Add the eggs, milk, and vanilla.
+
+3. Add the flour and mix well.
+
+=== LoRA model output ===
+List the steps for making a peanut butter and jelly sandwich.
+
+1. Preheat oven to 350 degrees F.
+
+2. In a large bowl, whisk together the butter, sugar, and eggs.
+
+3. Pour the mixture into a large bowl and whisk until smooth.
+
+
+Prompt: Write a short story about a robot who learns to paint.
+KL divergence: 0.407227
+L2 distance:   8680.000000
+
+=== Base model output ===
+Write a short story about a robot who learns to paint.
+
+The story is about a robot who learns to paint.
+
+The story is about a robot who learns to paint.
+
+The story is about a robot who learns to paint.
+
+The story is about a robot who learns to
+
+=== LoRA model output ===
+Write a short story about a robot who learns to paint.
+
+"I'm a robot, and I'm not a painter," says the robot, who is wearing a white suit and a blue tie. "I'm a robot, and I'm not a painter."
+
+The robot is a robot
+
+
+Prompt: Compare cats and dogs as pets in a few sentences.
+KL divergence: 0.207520
+L2 distance:   8080.000000
+
+=== Base model output ===
+Compare cats and dogs as pets in a few sentences.
+
+"I'm not going to say that I'm a cat lover, but I'm not going to say that I'm a dog lover either," he said. "I'm not going to say that I'm a dog lover either."
+
+=== LoRA model output ===
+Compare cats and dogs as pets in a few sentences.
+
+"I'm sorry, but I'm sorry, but I'm sorry, but I'm sorry, but I'm sorry, but I'm sorry, but I'm sorry, but I'm sorry, but I'm sorry, but I'm
+
+
+Prompt: Create a story about a robot that falls in love with a human.
+KL divergence: 0.347168
+L2 distance:   11000.000000
+
+=== Base model output ===
+Create a story about a robot that falls in love with a human.
+
+The story is about a robot that falls in love with a human.
+
+The story is about a robot that falls in love with a human.
+
+The story is about a robot that falls in love with a human.
+
+=== LoRA model output ===
+Create a story about a robot that falls in love with a human.
+
+The robot, named "Bumblebee," is a robotic robot that has been programmed to perform tasks such as picking up objects and moving them around. It's also capable of making complex calculations and making complex calculations on its own.
+```
 ## 1 — What I trained and why
 
 * I fine-tuned a **pretrained GPT‑2** model using **LoRA** (PEFT). LoRA injects *small low-rank adapters* into selected weight matrices (e.g., `q_proj`, `k_proj`, `v_proj`, `o_proj` or GPT‑2's `c_attn`, `c_proj`). In this case, I selected the `c_attn`, `c_proj` as the target modules.
