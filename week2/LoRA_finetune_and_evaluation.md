@@ -29,6 +29,7 @@
    "max_length": 512 
 }
 ```
+Perplexity ≈ **8.65** — means model assigns on average probability mass equivalent to choosing among \~8 tokens per position. Reasonable result for an instruction-tuned tiny model on a small dataset.
 
 ### 10000 Examples of Alpaca dataset
 **Hyperparameters used for fine-tune:**
@@ -54,7 +55,7 @@
 }
 ```
 
-Perplexity ≈ **8.13** — means model assigns on average probability mass equivalent to choosing among \~8 tokens per position. Reasonable result for an instruction-tuned tiny model on a small dataset.
+Perplexity ≈ **8.13** — an improvement from the 1000 example finetuned model.
 
 ---
 
