@@ -1,0 +1,17 @@
+framework,precision,batch_size,max_new_tokens,latency_s,peak_mem_MB,tokens/sec
+HF+bitsandbytes,fp16,1,50,0.933,268.9,53.57
+HF+bitsandbytes,fp16,2,50,0.565,271.1,88.5
+HF+bitsandbytes,fp16,4,50,0.504,275.6,99.25
+HF+bitsandbytes,fp16,8,50,0.466,285.9,107.22
+HF+bitsandbytes,int8,1,50,1.153,186.4,43.38
+HF+bitsandbytes,int8,2,50,1.167,188.8,42.83
+HF+bitsandbytes,int8,4,50,1.211,193.8,41.3
+HF+bitsandbytes,int8,8,50,1.103,203.7,45.33
+HF+bitsandbytes,fp16,1,50,0.879,268.9,56.9
+HF+bitsandbytes,fp16,2,50,0.704,271.1,71.04
+HF+bitsandbytes,fp16,4,50,0.594,275.6,84.24
+HF+bitsandbytes,fp16,8,50,0.543,285.9,92.04
+HF+bitsandbytes,int8,1,50,1.181,186.4,42.33
+HF+bitsandbytes,int8,2,50,1.227,188.8,40.76
+HF+bitsandbytes,int8,4,50,1.295,193.8,38.62
+HF+bitsandbytes,int8,8,50,1.338,203.7,37.36
